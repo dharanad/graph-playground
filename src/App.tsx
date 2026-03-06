@@ -18,6 +18,7 @@ import { EXAMPLES } from './examples';
 import { parseFromRegistry } from './parser';
 import { Vertex, TreeNode, ListNode } from './dsClasses';
 import { TraversalRecorder, createBFS, createDFS, type TraversalStep } from './traversal';
+import InfoPanel from './InfoPanel';
 
 type DSType = 'graph' | 'tree' | 'linkedList';
 
@@ -57,6 +58,7 @@ export default function App() {
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
 
+  const [showInfo, setShowInfo] = useState(false);
   const [traversalSteps, setTraversalSteps] = useState<TraversalStep[]>([]);
   const [stepIdx, setStepIdx] = useState(-1);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -181,7 +183,10 @@ export default function App() {
           ))}
         </select>
         <button className="run-btn" onClick={runCode}>▶ Run</button>
+        <button className="info-btn" onClick={() => setShowInfo(true)} title="API reference">?</button>
       </div>
+
+      {showInfo && <InfoPanel onClose={() => setShowInfo(false)} />}
 
       <div className="main">
         <div className="editor-pane">
