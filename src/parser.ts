@@ -1,4 +1,4 @@
-import type { Node, Edge } from '@xyflow/react';
+import { Position, MarkerType, type Node, type Edge } from '@xyflow/react';
 import type { Vertex, TreeNode as TreeNodeClass, ListNode } from './dsClasses';
 
 type DSType = 'graph' | 'tree' | 'linkedList';
@@ -395,6 +395,7 @@ function layoutTree(
         source: id,
         target: child.id,
         style: edgeStyle(),
+        markerEnd: { type: MarkerType.ArrowClosed, color: '#89b4fa', width: 18, height: 18 },
       });
       visitTree(child.id, depth + 1, pos + offsets[i], spread / 2);
     });
@@ -462,6 +463,8 @@ function layoutLinkedList(
       id,
       data: { label: String(n._value) },
       position: { x: i * 150 + 50, y: 200 },
+      sourcePosition: Position.Right,
+      targetPosition: Position.Left,
       style: nodeStyle(),
     });
     if (i > 0) {
@@ -469,8 +472,10 @@ function layoutLinkedList(
         id: `e${i - 1}`,
         source: chain[i - 1],
         target: id,
+        type: 'straight',
         style: edgeStyle(),
-        animated: true,
+        markerEnd: { type: MarkerType.ArrowClosed, color: '#89b4fa', width: 18, height: 18 },
+        animated: false,
       });
     }
   });
@@ -482,6 +487,8 @@ function layoutLinkedList(
       id: n._id,
       data: { label: String(n._value) },
       position: { x: i * 150 + 50, y: 400 },
+      sourcePosition: Position.Right,
+      targetPosition: Position.Left,
       style: nodeStyle(),
     });
   });
