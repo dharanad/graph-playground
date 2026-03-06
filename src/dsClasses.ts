@@ -26,6 +26,17 @@ export class Vertex {
     Vertex._registry.push(this);
   }
 
+  /** Human-readable label (read-only). Use in your algorithms: `curr.label` */
+  get label(): string { return this._label; }
+
+  /** Returns all directly reachable neighbours (outgoing edges). */
+  neighbors(): Vertex[] {
+    return Vertex._edges
+      .filter(e => e.fromId === this._id)
+      .map(e => Vertex._registry.find(v => v._id === e.toId)!)
+      .filter(Boolean);
+  }
+
   addEdge(other: Vertex, weight?: number) {
     Vertex._edges.push({ fromId: this._id, toId: other._id, weight });
   }
@@ -64,6 +75,14 @@ export class TreeNode {
     this._id = `t${_treeNodeCounter++}`;
     this._value = value;
     TreeNode._registry.push(this);
+  }
+
+  /** Node value (read-only). Use in your algorithms: `node.value` */
+  get value(): unknown { return this._value; }
+
+  /** Returns non-null children in order [left, right]. */
+  children(): TreeNode[] {
+    return [this._left, this._right].filter((n): n is TreeNode => n !== null);
   }
 
   setLeft(node: TreeNode) {
@@ -111,6 +130,9 @@ export class ListNode {
     this._value = value;
     ListNode._registry.push(this);
   }
+
+  /** Node value (read-only). Use in your algorithms: `node.value` */
+  get value(): unknown { return this._value; }
 
   setNext(node: ListNode) {
     this._next = node;

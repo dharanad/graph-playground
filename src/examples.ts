@@ -1,6 +1,11 @@
 export const EXAMPLES: Record<string, string> = {
-  graph: `// Create vertices and connect them with edges.
-// Use markSource() to highlight a starting vertex.
+  graph: `// Available in scope:
+//   Vertex, BFS, DFS
+//   mark(node, state)         'current' | 'visited' | 'frontier' | 'highlight'
+//   unmark(node)
+//   markEdge(from, to, state) 'active' | 'traversed'
+//   unmarkEdge(from, to)
+//   step("description")       record one animation frame
 
 let a = new Vertex("A")
 let b = new Vertex("B")
@@ -14,10 +19,43 @@ a.addEdge(c, 7)
 b.addEdge(d, 2)
 c.addEdge(d, 1)
 d.addEdge(e, 5)
+
+// --- Write your own BFS ---
+function bfs(start) {
+  const visited = new Set()
+  const queue = [start]
+  mark(start, 'frontier')
+  step('Enqueue "' + start.label + '"')
+
+  while (queue.length > 0) {
+    const curr = queue.shift()
+    if (visited.has(curr)) continue
+    visited.add(curr)
+    mark(curr, 'current')
+
+    for (const nb of curr.neighbors()) {
+      markEdge(curr, nb, 'active')
+      if (!visited.has(nb)) {
+        mark(nb, 'frontier')
+        queue.push(nb)
+      }
+    }
+    step('Visit "' + curr.label + '"')
+
+    mark(curr, 'visited')
+    for (const nb of curr.neighbors()) markEdge(curr, nb, 'traversed')
+  }
+  step('Done!')
+}
+
+bfs(a)
+
+// Tip: replace bfs(a) with DFS(a) to use the built-in DFS
 `,
 
-  tree: `// Build a binary tree using TreeNode.
-// Use setLeft() and setRight() to connect nodes.
+  tree: `// Available in scope:
+//   TreeNode, BFS, DFS
+//   mark / unmark / markEdge / unmarkEdge / step
 
 let root = new TreeNode(1)
 let n2 = new TreeNode(2)
@@ -33,10 +71,33 @@ n2.setLeft(n4)
 n2.setRight(n5)
 n3.setLeft(n6)
 n3.setRight(n7)
+
+// --- Write your own DFS (pre-order) ---
+function dfs(node) {
+  if (!node) return
+  mark(node, 'current')
+  step('Visit ' + node.value)
+
+  for (const child of node.children()) {
+    markEdge(node, child, 'active')
+    mark(child, 'frontier')
+  }
+  if (node.children().length) step('Explore children of ' + node.value)
+
+  mark(node, 'visited')
+  for (const child of node.children()) markEdge(node, child, 'traversed')
+
+  for (const child of node.children()) dfs(child)
+}
+
+dfs(root)
+step('DFS complete!')
+
+// Tip: replace dfs(root) with BFS(root) for level-order traversal
 `,
 
-  linkedList: `// Build a linked list using ListNode.
-// Use setNext() to chain nodes together.
+  linkedList: `// Available in scope: ListNode
+// (BFS / DFS do not apply to linked lists)
 
 let n1 = new ListNode(1)
 let n2 = new ListNode(2)
